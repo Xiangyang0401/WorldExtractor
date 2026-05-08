@@ -1,0 +1,524 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* 星空色板 */
+    --void: #020408;
+    --deep-space: #050d1a;
+    --nebula-dark: #0a1628;
+    --nebula: #0f2040;
+    --nebula-light: #162a50;
+
+    /* 星光色 */
+    --star-white: #e8f0ff;
+    --star-soft: #a8b8d8;
+    --star-muted: #5a6a88;
+    --star-dim: #2a3a58;
+
+    /* 强调色 */
+    --aurora-blue: #4a9eff;
+    --aurora-purple: #8b5cf6;
+    --aurora-cyan: #22d3ee;
+    --aurora-glow: rgba(74, 158, 255, 0.3);
+
+    /* 危险色 */
+    --nova-red: #ef4444;
+    --nova-red-glow: rgba(239, 68, 68, 0.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: var(--void);
+  }
+
+  body {
+    font-family: 'Noto Serif SC', 'Source Han Serif SC', 'STSong', serif;
+    color: var(--star-white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--star-dim);
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+
+  /* ======================================================
+     星空背景画布
+  ====================================================== */
+  .game-container {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, #0d1f3c 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, #0a1428 0%, transparent 60%),
+      radial-gradient(ellipse 50% 30% at 20% 60%, #060e1e 0%, transparent 50%),
+      var(--void);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* 星点层（CSS生成，不依赖图片） */
+  .game-container::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 8%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 22%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 18%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 30% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 48% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 62% 38%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 78% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 72%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 50% 68%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 85%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 95% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 8% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 42% 92%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 95%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      /* 蓝色星点 */
+      radial-gradient(1.5px 1.5px at 18% 28%, rgba(100,180,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 58% 15%, rgba(100,180,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 88% 42%, rgba(150,100,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 33% 70%, rgba(100,220,255,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .game-container > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ======================================================
+     星云卡片（主卡片容器）
+  ====================================================== */
+  .parchment-card {
+    background:
+      linear-gradient(135deg,
+        rgba(15, 32, 64, 0.95) 0%,
+        rgba(10, 22, 48, 0.98) 50%,
+        rgba(8, 16, 36, 0.95) 100%
+      );
+    border: 1px solid rgba(74, 158, 255, 0.2);
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 1px rgba(74, 158, 255, 0.05),
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      0 0 60px rgba(74, 158, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 40px rgba(74, 158, 255, 0.02);
+    position: relative;
+    backdrop-filter: blur(20px);
+  }
+
+  /* 卡片顶部光晕线 */
+  .parchment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(74, 158, 255, 0.4) 30%,
+      rgba(139, 92, 246, 0.4) 70%,
+      transparent 100%
+    );
+    border-radius: 1px;
+  }
+
+  /* 卡片四角装饰 */
+  .parchment-card::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(74, 158, 255, 0.06);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+
+  /* ======================================================
+     文字
+  ====================================================== */
+  .narrative-text {
+    font-size: 1rem;
+    line-height: 2.1;
+    color: var(--star-soft);
+    letter-spacing: 0.06em;
+    text-align: justify;
+    white-space: pre-wrap;
+  }
+
+  .world-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--star-white);
+    letter-spacing: 0.3em;
+    text-align: center;
+    text-shadow:
+      0 0 20px rgba(74, 158, 255, 0.5),
+      0 0 40px rgba(74, 158, 255, 0.2);
+  }
+
+  /* ======================================================
+     属性条
+  ====================================================== */
+  .attr-bar {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .attr-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg,
+      var(--aurora-blue) 0%,
+      var(--aurora-cyan) 100%
+    );
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 6px rgba(74, 158, 255, 0.6);
+  }
+
+  /* ======================================================
+     选项按钮
+  ====================================================== */
+  .choice-btn {
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(74, 158, 255, 0.12);
+    border-radius: 6px;
+    color: var(--star-soft);
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .choice-btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--aurora-blue), var(--aurora-purple));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .choice-btn:hover {
+    background: rgba(74, 158, 255, 0.06);
+    border-color: rgba(74, 158, 255, 0.35);
+    color: var(--star-white);
+    transform: translateX(4px);
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.08);
+  }
+
+  .choice-btn:hover::before {
+    opacity: 1;
+  }
+
+  .choice-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .choice-btn.selected {
+    background: rgba(74, 158, 255, 0.1);
+    border-color: rgba(74, 158, 255, 0.4);
+    color: var(--star-white);
+  }
+
+  /* ======================================================
+     按钮
+  ====================================================== */
+  .btn-primary {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg,
+      rgba(74, 158, 255, 0.15) 0%,
+      rgba(139, 92, 246, 0.15) 100%
+    );
+    color: var(--star-white);
+    border: 1px solid rgba(74, 158, 255, 0.4);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(74, 158, 255, 0.1) 0%,
+      rgba(139, 92, 246, 0.1) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .btn-primary:hover {
+    border-color: rgba(74, 158, 255, 0.7);
+    box-shadow:
+      0 0 20px rgba(74, 158, 255, 0.2),
+      0 0 40px rgba(74, 158, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:hover::after {
+    opacity: 1;
+  }
+
+  .btn-secondary {
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: var(--star-muted);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .btn-secondary:hover {
+    color: var(--star-soft);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  /* ======================================================
+     分隔线
+  ====================================================== */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(74, 158, 255, 0.08);
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  .divider::after {
+    content: '·';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(74, 158, 255, 0.3);
+    font-size: 0.8rem;
+    background: var(--nebula-dark);
+    padding: 0 0.5rem;
+    line-height: 1;
+  }
+
+  /* ======================================================
+     印章标签
+  ====================================================== */
+  .stamp {
+    display: inline-block;
+    padding: 0.2rem 0.85rem;
+    border: 1px solid rgba(74, 158, 255, 0.35);
+    color: var(--aurora-blue);
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    border-radius: 20px;
+    background: rgba(74, 158, 255, 0.06);
+    text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+  }
+
+  /* ======================================================
+     余波区块
+  ====================================================== */
+  .ripple-block {
+    padding: 1rem 1.25rem;
+    background: rgba(34, 211, 238, 0.04);
+    border-left: 2px solid rgba(34, 211, 238, 0.3);
+    color: var(--star-muted);
+    font-size: 0.9rem;
+    line-height: 1.9;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* ======================================================
+     进度条
+  ====================================================== */
+  .progress-bar {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg,
+      var(--aurora-blue) 0%,
+      var(--aurora-cyan) 100%
+    );
+    box-shadow: 0 0 8px rgba(74, 158, 255, 0.6);
+    transition: width 0.4s ease;
+  }
+
+  /* ======================================================
+     成就卡
+  ====================================================== */
+  .achievement-card {
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(74, 158, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .achievement-card:hover {
+    background: rgba(74, 158, 255, 0.05);
+    border-color: rgba(74, 158, 255, 0.25);
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.05);
+  }
+
+  /* ======================================================
+     动画
+  ====================================================== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInSlow {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes aurora {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 0.3; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(74, 158, 255, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(74, 158, 255, 0.5), 0 0 60px rgba(139, 92, 246, 0.2); }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  .animate-fadeInSlow {
+    animation: fadeInSlow 1.5s ease forwards;
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft {
+    animation: pulse-soft 2.5s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  /* ======================================================
+     input 样式
+  ====================================================== */
+  .star-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(74, 158, 255, 0.15);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--star-white);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .star-input::placeholder {
+    color: var(--star-muted);
+  }
+
+  .star-input:focus {
+    border-color: rgba(74, 158, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.08);
+  }
+
+  /* ======================================================
+     界变面板
+  ====================================================== */
+  .attr-change-panel {
+    padding: 0.875rem 1rem;
+    background: rgba(74, 158, 255, 0.04);
+    border: 1px solid rgba(74, 158, 255, 0.12);
+    border-radius: 6px;
+  }
+
+  /* ======================================================
+     漂浮粒子（纯CSS，点缀用）
+  ====================================================== */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+  }
+}
