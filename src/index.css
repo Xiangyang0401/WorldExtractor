@@ -10,10 +10,10 @@
     --nebula-light: #162a50;
 
     /* 星光色 */
-    --star-white: #e8f0ff;
-    --star-soft: #a8b8d8;
-    --star-muted: #5a6a88;
-    --star-dim: #2a3a58;
+    --star-white: #f0f6ff;
+    --star-soft: #c8d8f0;
+    --star-muted: #8a9ab8;
+    --star-dim: #4a5a78;
 
     /* 强调色 */
     --aurora-blue: #4a9eff;
@@ -308,8 +308,8 @@
   .btn-secondary {
     padding: 0.75rem 2rem;
     background: transparent;
-    color: var(--star-muted);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--star-soft);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 6px;
     font-family: inherit;
     font-size: 0.95rem;
@@ -319,9 +319,9 @@
   }
 
   .btn-secondary:hover {
-    color: var(--star-soft);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.03);
+    color: var(--star-white);
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   /* ======================================================

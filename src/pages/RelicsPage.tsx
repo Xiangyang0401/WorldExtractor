@@ -1,5 +1,5 @@
-// ============================================================
-// 万界拾遗 · 遗物背包页面
+﻿// ============================================================
+// 宇宙尽头 · 遗物背包页面
 // ============================================================
 
 import { useApp } from '@/store/AppContext'
@@ -14,7 +14,7 @@ export function RelicsPage() {
 
         <div className="flex items-center justify-between mb-6">
           <h2 className="world-title" style={{ fontSize: '1.3rem', letterSpacing: '0.3em', margin: 0 }}>
-            遗物
+            世界遗物
           </h2>
           <button
             className="btn-secondary"

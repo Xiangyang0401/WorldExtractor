@@ -2,16 +2,55 @@
 // 世界简介页
 // ============================================================
 
+import { useState } from 'react'
 import { useApp } from '@/store/AppContext'
 import { useGameLogic } from '@/hooks/useGameLogic'
+import { drawRandomWorld } from '@/data/worlds'
+import { generateFullWorldData } from '@/services/ai'
+import { getWorldHistory, getWorldFrameByName, saveWorldFrame } from '@/services/db'
 import { TEXT } from '@/constants/text'
 
 export function WorldIntroPage() {
   const { state, dispatch, navigateTo } = useApp()
   const { startExploration } = useGameLogic()
-  const world = state.currentWorld
+  const [isRerolling, setIsRerolling] = useState(false)
 
+  const world = state.currentWorld
   if (!world) { navigateTo('home'); return null }
+
+  const handleReroll = async () => {
+    if (isRerolling) return
+
+    if (state.mode === 'ancient') {
+      const next = drawRandomWorld(world.id)
+      dispatch({ type: 'SET_CURRENT_WORLD', world: next })
+    } else {
+      if (!state.settings.aiApiUrl || !state.settings.aiApiKeyEncrypted) {
+        navigateTo('home')
+        return
+      }
+      setIsRerolling(true)
+      try {
+        const names = ['虚空之境', '时光回廊', '星骸大陆', '幽灵港湾', '彼岸花园', '暗流之城', '沉默山脉', '织梦之海']
+        const name = names[Math.floor(Math.random() * names.length)]
+        const [existingFrame, history] = await Promise.all([
+          getWorldFrameByName(name).catch(() => null),
+          getWorldHistory(name).catch(() => null),
+        ])
+        const { world: next, frame } = await generateFullWorldData(
+          name, state.settings, existingFrame, history, () => {}
+        )
+        if (!existingFrame) {
+          await saveWorldFrame(frame).catch(() => {})
+        }
+        dispatch({ type: 'SET_CURRENT_WORLD', world: next })
+      } catch {
+        navigateTo('home')
+      } finally {
+        setIsRerolling(false)
+      }
+    }
+  }
 
   return (
     <div className="game-container">
@@ -58,17 +97,16 @@ export function WorldIntroPage() {
             className="btn-primary"
             style={{ letterSpacing: '0.25em', padding: '1rem' }}
             onClick={() => void startExploration(world)}
+            disabled={isRerolling}
           >
             {TEXT.ENTER_WORLD}
           </button>
           <button
             className="btn-secondary"
-            onClick={() => {
-              dispatch({ type: 'SET_CURRENT_WORLD', world: null })
-              navigateTo('home')
-            }}
+            onClick={() => void handleReroll()}
+            disabled={isRerolling}
           >
-            {TEXT.SKIP_WORLD}
+            {isRerolling ? '正在选择…' : '重新选择'}
           </button>
         </div>
       </div>

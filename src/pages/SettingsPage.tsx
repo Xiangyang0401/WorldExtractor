@@ -1,5 +1,5 @@
 // ============================================================
-// 行囊（设置）页面
+// 设置面板页面
 // ============================================================
 
 import { useState, useEffect } from 'react'
@@ -80,7 +80,7 @@ export function SettingsPage() {
 
         {/* AI配置 */}
         <div className="mb-6 space-y-4">
-          <p style={{ color: 'var(--star-muted)', fontSize: '0.72rem', letterSpacing: '0.18em' }}>无界模式配置</p>
+          <p style={{ color: 'var(--star-muted)', fontSize: '0.72rem', letterSpacing: '0.18em' }}>创世神典配置</p>
           {[
             { label: TEXT.AI_API_URL, val: apiUrl, set: setApiUrl, type: 'url', ph: TEXT.AI_API_URL_PLACEHOLDER },
             { label: TEXT.AI_API_KEY, val: apiKey, set: setApiKey, type: 'password', ph: TEXT.AI_API_KEY_PLACEHOLDER },

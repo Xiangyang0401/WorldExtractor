@@ -1,5 +1,5 @@
-// ============================================================
-// 万界拾遗 · 全局状态管理（使用 React Context + useReducer）
+﻿// ============================================================
+// 宇宙尽头 · 全局状态管理（使用 React Context + useReducer）
 // ============================================================
 
 import {
@@ -51,8 +51,10 @@ export interface AppState {
   loadingPercent: number
   /** 玩家当前持有的遗物列表（跨世界积累） */
   relics: Relic[]
-  /** 已探索的世界数量（对峙时的血量基础） */
+  /** 本周目已探索的世界数量（达到上限触发对峙） */
   exploredWorldCount: number
+  /** 对峙血量：存活世界数（初始5，对峙时消耗） */
+  worldCount: number
   /** 当前周目（从1开始） */
   cycle: number
   /** 当前对峙会话 */
@@ -77,7 +79,6 @@ export type AppAction =
   | { type: 'SET_CONFRONTATION'; session: ConfrontationSession | null }
   | { type: 'UPDATE_CONFRONTATION'; session: ConfrontationSession }
   | { type: 'RESET_CYCLE' }  // 失败后重置本周目积累
-
 // ============================================================
 // Reducer
 // ============================================================
@@ -117,7 +118,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'UPDATE_CONFRONTATION':
       return { ...state, confrontationSession: action.session }
     case 'RESET_CYCLE':
-      return { ...state, relics: [], exploredWorldCount: 5, confrontationSession: null, cycle: state.cycle + 1 }
+      return { ...state, relics: [], exploredWorldCount: 0, worldCount: 5, confrontationSession: null, cycle: state.cycle + 1 }
     default:
       return state
   }
@@ -138,7 +139,8 @@ const initialState: AppState = {
   loadingText: '此界正在成形…',
   loadingPercent: 0,
   relics: [],
-  exploredWorldCount: 5,
+  exploredWorldCount: 0,
+  worldCount: 5,
   cycle: 1,
   confrontationSession: null,
 }

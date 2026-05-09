@@ -1,5 +1,5 @@
-// ============================================================
-// 万界拾遗 · 对峙数据：虚无的五轮显现
+﻿// ============================================================
+// 宇宙尽头 · 对峙数据：虚无的五轮显现
 // ============================================================
 
 import type { VoidRound } from '@/types'
@@ -114,6 +114,7 @@ export function initConfrontationSession(
     roundHistory: [],
     finished: false,
     victory: false,
+    pendingDelayDamage: 0,
   }
 }
 
@@ -128,10 +129,17 @@ export function executeRound(
   let worldCountBefore = session.worldCount
   let worldCountAfter = session.worldCount
   let relics = session.relics.map(r => ({ ...r }))
+  let pendingDelayDamage = session.pendingDelayDamage
 
   const baseDestroy = calcDestroyCount(round, session.worldCount)
-  let actualDestroy = baseDestroy
-  let playerAction = '无所为'
+  // 本轮伤害 = 本轮基础伤害 + 上一轮被 delay 推迟的伤害
+  let actualDestroy = baseDestroy + pendingDelayDamage
+  let playerAction = pendingDelayDamage > 0
+    ? `（含上轮延迟伤害 ${pendingDelayDamage}）`
+    : '无所为'
+
+  // 结算后清零 pendingDelayDamage
+  pendingDelayDamage = 0
 
   // 处理自动触发的道具
   const autoRelic = relics.find(
@@ -139,10 +147,8 @@ export function executeRound(
   )
   if (autoRelic) {
     autoRelic.used = true
-    if (autoRelic.effectType === 'auto') {
-      actualDestroy = Math.max(0, actualDestroy - autoRelic.effectValue)
-      playerAction = `【自动触发】${autoRelic.name}`
-    }
+    actualDestroy = Math.max(0, actualDestroy - autoRelic.effectValue)
+    playerAction = `【自动触发】${autoRelic.name}`
   }
 
   // 处理侵蚀回合（摧毁道具）
@@ -194,6 +200,27 @@ export function executeRound(
         }
         break
       }
+      case 'delay': {
+        if (session.currentRound < 5) {
+          pendingDelayDamage = baseDestroy
+          actualDestroy = 0
+          playerAction = `使用了「${relicUsed.name}」，本轮伤害推迟至下一轮`
+        }
+        break
+      }
+      case 'mirror': {
+        // 照见虚无——完全抵消本轮全部伤害（含延迟伤害），但随机失去一件其他非auto遗物
+        actualDestroy = 0
+        const sacrificePool = relics.filter(r => !r.used && r.id !== relicUsed.id && r.effectType !== 'auto')
+        if (sacrificePool.length > 0) {
+          const sacrifice = sacrificePool[Math.floor(Math.random() * sacrificePool.length)]
+          relics = relics.map(r => r.id === sacrifice.id ? { ...r, used: true } : r)
+          playerAction = `使用了「${relicUsed.name}」，虚无照见自身停下了，但「${sacrifice.name}」随之消散`
+        } else {
+          playerAction = `使用了「${relicUsed.name}」，虚无照见自身，短暂停下了`
+        }
+        break
+      }
     }
   }
 
@@ -222,5 +249,6 @@ export function executeRound(
     roundHistory: [...session.roundHistory, record],
     finished,
     victory,
+    pendingDelayDamage,
   }
 }

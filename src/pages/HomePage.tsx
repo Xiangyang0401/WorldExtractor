@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 // 主页 — 左右布局，世界详情内嵌展示
 // ============================================================
 
@@ -38,9 +38,9 @@ export function HomePage() {
           ])
         : [null, null]
 
-      console.log('[万界拾遗] 世界名称:', name)
-      console.log('[万界拾遗] 本地框架:', existingFrame ? `已找到(id=${existingFrame.id})` : '无')
-      console.log('[万界拾遗] 历史状态:', history ? `已找到(探索${history.explorationCount}次，上次结局=${history.lastOutcomeName})` : '无')
+      console.log('[宇宙尽头] 世界名称:', name)
+      console.log('[宇宙尽头] 本地框架:', existingFrame ? `已找到(id=${existingFrame.id})` : '无')
+      console.log('[宇宙尽头] 历史状态:', history ? `已找到(探索${history.explorationCount}次，上次结局=${history.lastOutcomeName})` : '无')
 
       const { world, frame } = await generateFullWorldData(
         name,
@@ -53,11 +53,11 @@ export function HomePage() {
       // 无界模式：保存框架（首次创建时才会是新的）
       if (state.mode === 'boundless' && !existingFrame) {
         await saveWorldFrame(frame).catch((e) =>
-          console.warn('[万界拾遗] 框架存储失败:', e)
+          console.warn('[宇宙尽头] 框架存储失败:', e)
         )
-        console.log('[万界拾遗] 框架已存储:', frame.id, frame.name)
+        console.log('[宇宙尽头] 框架已存储:', frame.id, frame.name)
       } else {
-        console.log('[万界拾遗] 复用已有框架，跳过存储')
+        console.log('[宇宙尽头] 复用已有框架，跳过存储')
       }
 
       setPreviewWorld(world)
@@ -92,7 +92,7 @@ export function HomePage() {
     if (state.mode === 'ancient') {
       const found = PRESET_WORLDS.find((w) => w.name === name)
       if (found) { setPreviewWorld(found); return }
-      setInputError('古卷模式仅支持预设世界，请切换无界模式以造界')
+      setInputError('时间废墟模式仅支持预设世界，请切换创世神典模式以创世')
       return
     }
     await handleGenerateWorld(name)
@@ -112,12 +112,12 @@ export function HomePage() {
 
   const handleGoConfront = useCallback(() => {
     const session = initConfrontationSession(
-      state.exploredWorldCount,
+      state.worldCount,
       state.relics.map(r => ({ ...r, used: false }))
     )
     dispatch({ type: 'SET_CONFRONTATION', session })
     navigateTo('confrontation')
-  }, [state.exploredWorldCount, state.relics, dispatch, navigateTo])
+  }, [state.worldCount, state.relics, dispatch, navigateTo])
 
   return (
     <div className="game-container" style={{ padding: '2rem 1.5rem' }}>
@@ -135,17 +135,42 @@ export function HomePage() {
         <h1 className="world-title mb-2" style={{ fontSize: '2.6rem', letterSpacing: '0.5em' }}>
           {TEXT.GAME_TITLE}
         </h1>
-        <p style={{ color: 'var(--star-muted)', fontSize: '0.8rem', letterSpacing: '0.25em' }}>
+        <p style={{ color: 'var(--star-muted)', fontSize: '0.8rem', letterSpacing: '0.25em', marginBottom: '0.75rem' }}>
           {TEXT.GAME_SUBTITLE}
         </p>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+          <span style={{
+            color: 'var(--aurora-blue)',
+            fontSize: '0.9rem',
+            letterSpacing: '0.15em',
+            border: '1px solid rgba(74,158,255,0.25)',
+            padding: '0.2rem 0.85rem',
+            borderRadius: '20px',
+            background: 'rgba(74,158,255,0.06)',
+          }}>
+            第 {state.cycle} 周目
+          </span>
+          <span style={{ color: 'rgba(74,158,255,0.2)', fontSize: '0.7rem' }}>·</span>
+          <span style={{
+            color: 'var(--star-soft)',
+            fontSize: '0.9rem',
+            letterSpacing: '0.15em',
+            border: '1px solid rgba(255,255,255,0.1)',
+            padding: '0.2rem 0.85rem',
+            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.03)',
+          }}>
+            {state.mode === 'ancient' ? TEXT.MODE_TAG_ANCIENT : TEXT.MODE_TAG_BOUNDLESS}
+          </span>
+        </div>
       </div>
 
-      {/* 主体：三栏布局，固定等高 */}
+      {/* 主体：四栏布局，固定等高 */}
       <div className="w-full animate-fadeIn" style={{
         display: 'grid',
-        gridTemplateColumns: '280px 1.2fr 310px',
+        gridTemplateColumns: '280px 1fr 320px 300px',
         gap: '1.25rem',
-        maxWidth: 1100,
+        maxWidth: 1400,
         alignItems: 'stretch',
         height: 560,
       }}>
@@ -159,21 +184,13 @@ export function HomePage() {
             background: 'rgba(74,158,255,0.04)',
             border: '1px solid rgba(74,158,255,0.1)',
             borderRadius: '6px',
-            marginBottom: '1.25rem',
+            marginBottom: '0.75rem',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--star-muted)', fontSize: '0.72rem', letterSpacing: '0.1em' }}>
-                第 {state.cycle} 周目
-              </span>
-              <span style={{ color: 'var(--star-muted)', fontSize: '0.72rem', letterSpacing: '0.1em' }}>
-                {state.mode === 'ancient' ? TEXT.MODE_TAG_ANCIENT : TEXT.MODE_TAG_BOUNDLESS}
-              </span>
-            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div>
                 <p style={{ color: 'var(--star-muted)', fontSize: '0.68rem', letterSpacing: '0.1em', margin: 0 }}>存活世界</p>
                 <p style={{ color: 'var(--star-white)', fontSize: '1.4rem', fontFamily: 'monospace', margin: 0, lineHeight: 1.2 }}>
-                  {state.exploredWorldCount}
+                  {state.worldCount}
                 </p>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -183,39 +200,39 @@ export function HomePage() {
                   fontFamily: 'monospace',
                   margin: 0,
                   lineHeight: 1.2,
-                  color: state.exploredWorldCount >= 4 ? 'var(--nova-red)' : 'var(--aurora-cyan)',
+                  color: state.exploredWorldCount >= 1 ? 'var(--nova-red)' : 'var(--aurora-cyan)',
                 }}>
-                  {Math.max(0, 5 - state.exploredWorldCount)} 次后
+                  {Math.max(0, 2 - state.exploredWorldCount)} 次后
                 </p>
               </div>
             </div>
-            {state.exploredWorldCount >= 5 && (
+            {state.exploredWorldCount >= 2 && (
               <p style={{ color: 'var(--nova-red)', fontSize: '0.72rem', textAlign: 'center', marginTop: '0.5rem', letterSpacing: '0.1em' }}>
                 虚无已至，必须前往宇宙尽头
               </p>
             )}
           </div>
 
-          {/* 渡界 */}
-          <div className="mb-5">
-            <p style={{ color: 'var(--star-muted)', fontSize: '0.7rem', letterSpacing: '0.2em', marginBottom: '0.75rem', textAlign: 'center' }}>
-              随机渡界
+          {/* 游历 */}
+          <div className="mb-3">
+            <p style={{ color: 'var(--star-muted)', fontSize: '0.7rem', letterSpacing: '0.2em', marginBottom: '0.5rem', textAlign: 'center' }}>
+              随机游历
             </p>
             <button
               className="btn-primary w-full"
-              style={{ letterSpacing: '0.4em', padding: '0.875rem', fontSize: '1rem' }}
+              style={{ letterSpacing: '0.4em', padding: '0.7rem', fontSize: '1rem' }}
               onClick={() => void handleDraw()}
-              disabled={isGenerating || state.exploredWorldCount >= 5}
+              disabled={isGenerating || state.exploredWorldCount >= 2}
             >
               {isGenerating ? '…' : TEXT.DRAW_WORLD}
             </button>
           </div>
 
-          <hr className="divider" />
+          <hr className="divider" style={{ margin: '0.75rem 0' }} />
 
-          {/* 以名造界 */}
-          <div className="mb-5">
-            <p style={{ color: 'var(--star-muted)', fontSize: '0.7rem', letterSpacing: '0.2em', marginBottom: '0.75rem', textAlign: 'center' }}>
+          {/* 创世 */}
+          <div className="mb-3">
+            <p style={{ color: 'var(--star-muted)', fontSize: '0.7rem', letterSpacing: '0.2em', marginBottom: '0.5rem', textAlign: 'center' }}>
               {TEXT.CREATE_WORLD}
             </p>
             <div className="space-y-2">
@@ -235,56 +252,54 @@ export function HomePage() {
               <button
                 className="btn-secondary w-full"
                 onClick={() => void handleCreateWorld()}
-                disabled={isGenerating || state.exploredWorldCount >= 5}
+                disabled={isGenerating || state.exploredWorldCount >= 2}
               >
                 {TEXT.CREATE_WORLD}
               </button>
             </div>
           </div>
 
-          <hr className="divider" />
+          <hr className="divider" style={{ margin: '0.75rem 0' }} />
 
           {/* 底部导航 — 撑到底部 */}
           <div style={{ marginTop: 'auto' }}>
-            {/* 前往宇宙尽头 */}
-            {state.exploredWorldCount > 0 && (
-              <div className="mb-3">
-                <button
-                  className="btn-primary w-full"
-                  style={{
-                    letterSpacing: '0.15em',
-                    fontSize: '0.88rem',
-                    padding: '0.75rem',
-                    background: 'rgba(139,92,246,0.12)',
-                    borderColor: 'rgba(139,92,246,0.4)',
-                  }}
-                  onClick={handleGoConfront}
-                >
-                  前往宇宙尽头
-                </button>
-                <p style={{ color: 'var(--star-dim)', fontSize: '0.7rem', textAlign: 'center', marginTop: '0.4rem', letterSpacing: '0.1em' }}>
-                  {state.relics.length} 件遗物 · {state.exploredWorldCount} 个世界
-                </p>
-              </div>
-            )}
-            <div className="flex justify-between gap-2">
+            {/* 前往宇宙尽头 — 始终占位，exploredWorldCount>=1 才可见可点击 */}
+            <div className="mb-3" style={{ visibility: state.exploredWorldCount >= 1 ? 'visible' : 'hidden' }}>
+              <button
+                className="btn-primary w-full"
+                style={{
+                  letterSpacing: '0.15em',
+                  fontSize: '0.88rem',
+                  padding: '0.75rem',
+                  background: 'rgba(139,92,246,0.12)',
+                  borderColor: 'rgba(139,92,246,0.4)',
+                }}
+                onClick={handleGoConfront}
+              >
+                前往宇宙尽头
+              </button>
+              <p style={{ color: 'var(--star-dim)', fontSize: '0.7rem', textAlign: 'center', marginTop: '0.4rem', letterSpacing: '0.1em' }}>
+                {state.relics.length} 件遗物 · {state.worldCount} 个世界
+              </p>
+            </div>
+            <div className="flex justify-between gap-1">
               <button
                 className="btn-secondary"
-                style={{ flex: 1, padding: '0.5rem', fontSize: '0.82rem' }}
+                style={{ flex: 1, padding: '0.5rem 0.25rem', fontSize: '0.78rem' }}
                 onClick={() => void handleGoAchievements()}
               >
                 {TEXT.ACHIEVEMENTS}
               </button>
               <button
                 className="btn-secondary"
-                style={{ flex: 1, padding: '0.5rem', fontSize: '0.82rem' }}
+                style={{ flex: 1, padding: '0.5rem 0.25rem', fontSize: '0.78rem' }}
                 onClick={() => navigateTo('relics')}
               >
-                遗物
+                {TEXT.RELICS_TITLE}
               </button>
               <button
                 className="btn-secondary"
-                style={{ flex: 1, padding: '0.5rem', fontSize: '0.82rem' }}
+                style={{ flex: 1, padding: '0.5rem 0.25rem', fontSize: '0.78rem' }}
                 onClick={() => navigateTo('settings')}
               >
                 {TEXT.SETTINGS}
@@ -357,7 +372,7 @@ export function HomePage() {
                 <button
                   className="btn-secondary"
                   style={{ fontSize: '0.85rem' }}
-                  onClick={() => setPreviewWorld(null)}
+                  onClick={() => void handleDraw()}
                 >
                   {TEXT.SKIP_WORLD}
                 </button>
@@ -372,7 +387,30 @@ export function HomePage() {
                 ✦ ✧ ✦
               </div>
               <p style={{ color: 'var(--star-dim)', fontSize: '0.85rem', letterSpacing: '0.15em', lineHeight: 2 }}>
-                渡界，或以名造界<br />此处将展示你抽到的世界
+                游历，或创世<br />此处将展示你选择的世界
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ── 图片栏：世界缩略图（时间废墟模式专属） ── */}
+        <div className="parchment-card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {state.mode === 'ancient' && previewWorld?.thumbnail ? (
+            <img
+              src={previewWorld.thumbnail}
+              alt={previewWorld.name}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+                borderRadius: '7px',
+              }}
+            />
+          ) : (
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <p style={{ color: 'var(--star-dim)', fontSize: '0.75rem', letterSpacing: '0.12em', textAlign: 'center', lineHeight: 2, opacity: 0.4 }}>
+                {state.mode === 'ancient' ? '此界尚无图像' : '创世神典\n不支持图像'}
               </p>
             </div>
           )}
@@ -394,7 +432,7 @@ export function HomePage() {
               />
 
           {/* 前往宇宙尽头 */}
-          {state.exploredWorldCount > 0 && (
+          {state.exploredWorldCount >= 2 && (
             <div className="mb-4">
               <button
                 className="btn-primary w-full"
@@ -410,7 +448,7 @@ export function HomePage() {
                 前往宇宙尽头
               </button>
               <p style={{ color: 'var(--star-dim)', fontSize: '0.7rem', textAlign: 'center', marginTop: '0.4rem', letterSpacing: '0.1em' }}>
-                携带 {state.relics.length} 件遗物 · {state.exploredWorldCount} 个世界
+                携带 {state.relics.length} 件遗物 · {state.worldCount} 个世界
               </p>
             </div>
           )}

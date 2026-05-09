@@ -1,5 +1,5 @@
-// ============================================================
-// 万界拾遗 · AI 服务（无界模式）
+﻿// ============================================================
+// 宇宙尽头 · AI 服务（无界模式）
 // ============================================================
 
 import type { WorldData, WorldHistory, WorldFrame, AppSettings } from '@/types'
@@ -75,13 +75,13 @@ function safeParseJSON<T>(text: string): T | null {
 
     return JSON.parse(jsonStr) as T
   } catch (e) {
-    console.error('[万界拾遗] JSON解析失败:', e)
+    console.error('[宇宙尽头] JSON解析失败:', e)
     const posMatch = String(e).match(/position (\d+)/)
     if (posMatch) {
       const pos = parseInt(posMatch[1])
-      console.log(`[万界拾遗] 失败位置附近 (pos=${pos}):`, JSON.stringify(text.slice(Math.max(0, pos - 100), pos + 100)))
+      console.log(`[宇宙尽头] 失败位置附近 (pos=${pos}):`, JSON.stringify(text.slice(Math.max(0, pos - 100), pos + 100)))
     }
-    console.log('[万界拾遗] 完整原始内容:', text)
+    console.log('[宇宙尽头] 完整原始内容:', text)
     return null
   }
 }
@@ -205,7 +205,7 @@ export async function generateWorldFrame(
   const messages = [
     {
       role: 'system',
-      content: `你是一个世界构建者，为文字探索游戏「万界拾遗」生成世界框架数据。框架包含：世界简介、4个专属属性、2个玩家身份、2-3个结局。文风：文学性强，偏诗意。
+      content: `你是一个世界构建者，为文字探索游戏「宇宙尽头」生成世界框架数据。框架包含：世界简介、4个专属属性、2个玩家身份、2-3个结局。文风：文学性强，偏诗意。
 请严格按照如下JSON格式输出：
 ${FRAME_SCHEMA}
 
@@ -271,7 +271,7 @@ export async function generateWorldEvents(
   const messages = [
     {
       role: 'system',
-      content: `你是一个世界构建者，为文字探索游戏「万界拾遗」生成本次探索的5个事件。
+      content: `你是一个世界构建者，为文字探索游戏「宇宙尽头」生成本次探索的5个事件。
 世界名称：${frame.name}
 世界简介：${frame.description}
 属性：${frame.attributes.map(a => `${a.key}(${a.name})`).join(', ')}

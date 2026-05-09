@@ -1,5 +1,5 @@
-// ============================================================
-// 万界拾遗 · 核心类型定义
+﻿// ============================================================
+// 宇宙尽头 · 核心类型定义
 // ============================================================
 
 /** 游戏模式 */
@@ -76,6 +76,8 @@ export interface WorldData {
   name: string
   /** 世界简介（文学风格） */
   description: string
+  /** 世界缩略图路径（仅时间废墟模式预设世界使用，相对于 public/） */
+  thumbnail?: string
   /** 4个专属属性 */
   attributes: Omit<WorldAttribute, 'value'>[]
   /** 可随机分配的身份列表 */
@@ -209,6 +211,8 @@ export interface Relic {
     | 'protect_relics'  // 保护道具不被摧毁
     | 'auto'            // 自动触发，不可主动使用
     | 'reduce_final'    // 减免第5轮效果
+    | 'delay'           // 将本轮伤害推迟到下一轮结算（下轮双倍承受）
+    | 'mirror'          // 照见虚无本体，完全抵消本轮伤害，但随机失去一件其他遗物
   /** 效果数值 */
   effectValue: number
   /** 自动触发的回合（effectType为auto时有效） */
@@ -252,6 +256,8 @@ export interface ConfrontationSession {
   finished: boolean
   /** 是否胜利 */
   victory: boolean
+  /** 被 delay 推迟到下一轮的额外伤害（0表示无） */
+  pendingDelayDamage: number
 }
 
 /** 单轮行动记录 */
